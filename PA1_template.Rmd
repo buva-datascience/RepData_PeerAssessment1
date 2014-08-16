@@ -1,20 +1,96 @@
-# Reproducible Research: Peer Assessment 1
+---
+title: "Reproducible Research - Peer Assignment#1"
+author: "Buva Ramamoorthy"
+date: "August 13, 2014"
+output: html_document
+---
+
+##Loading and preprocessing the data  
+  
+**1. Show any code that is needed to  
+- Load the data (i.e. read.csv())  
+- Process/transform the data (if necessary) into a format suitable for your analysis**  
+
+*The data processing is done as following:  
+ 1. Source file "**activity.zip**" is downloaded if not present  
+ 2. Source data is unzipped using unz() function and read via the read.csv() function  
+ 3. Examine the dataframe using header() and str() functions* 
+
+```{r fileread, echo=TRUE, cache=TRUE }
+
+# load datatable package
+library(data.table)     
+
+# function to Download the file from the website location to the local directory
+dwld_file <- function(fileurl, dest){
+        if (!file.exists("data")) dir.create("data")                            # create a folder if it doesnt exist        
+        
+        if (!file.exists(dest)) {                                               # download the file if its not already downloaded
+                download.file(fileurl, destfile = dest, method = "curl")
+        }
+}
+
+# Set local destination folder
+dest="./data/activity.zip"
+
+# Call funtion to download from the url
+dwld_file("https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip", dest)
+
+# List the files in zip
+unzip(dest, list=T)
+
+# set working directory
+wd <- "~/Documents/Buva/Data Science/Data Science Course-John Hopkins/05-Reproducible Research/Peer Assessment#1"
+setwd(wd)
+
+# Set the directory of the file
+dest="./data/activity.zip"                                      
+
+# Unzip and read into a dataframe        
+ActivityTable <- read.csv(unz(dest, filename="activity.csv"))   
+
+# Examine dataframe
+head(ActivityTable)       
+str(ActivityTable)
+```
+  
+## What is mean total number of steps taken per day?  
+  
+**2.  What is mean total number of steps taken per day?  
+      For this part of the assignment, you can ignore the missing values in the dataset.  
+      Make a histogram of the total number of steps taken each day.  
+      Calculate and report the mean and median total number of steps taken per day**
+      
+*Ignore NAs by filtering out the NA values from steps column and draw histogram of total steps taken each day*
+```{r histogram, echo=TRUE, cache=TRUE }
+# ignore NAs
+Activities <- ActivityTable[!is.na(ActivityTable$steps),]      
+
+# make date column as factor
+Activities$date <- factor(as.character(Activities$date))        
+
+# Calculate mean steps taken each day using tapply()
+meanSteps <- tapply(Activities$steps, Activities$date, mean, na.rm=T) 
+
+# Caluculate the total steps taken each day using tapply()
+totalSteps <- tapply(Activities$steps, Activities$date, sum, na.rm=T)
+
+# Create a histogram for the total steps taken each day
+hist(totalSteps, xlab="Total Steps taken each day", main="Histogram of the total number of steps taken each day", col=555 )
+```
+
+*The Median and Mean of the total number of steps taken per day is calculated as below:*
+```{r calculate, echo = TRUE }
+# Mean of the total number of steps taken per day 
+mean(totalSteps)
+# Median of the total number of steps taken per day 
+median(totalSteps)
+```
+
+The Mean of the total steps taken each day is **`r as.integer(mean(totalSteps))`** and 
+Median of the total steps taken each day is **`r median(totalSteps)`**  
+  
+  
 
 
-## Loading and preprocessing the data
 
-
-
-## What is mean total number of steps taken per day?
-
-
-
-## What is the average daily activity pattern?
-
-
-
-## Imputing missing values
-
-
-
-## Are there differences in activity patterns between weekdays and weekends?
