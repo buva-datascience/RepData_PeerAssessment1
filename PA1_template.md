@@ -5,7 +5,7 @@ Date: "August 16, 2014"
 ---
   
 **Important Note:** *Kindly visit the below link for for updated report. The plots are available in the figures folder.  
-rpubs  --> [http://rpubs.com/bram/reproducibileresearch](http://rpubs.com/bram/reproducibileresearch) 
+rpubs  --> [http://rpubs.com/bram/reproducibileresearch](http://rpubs.com/bram/reproducibileresearch)   
 github --> [https://github.com/buva-datascience/RepData_PeerAssessment1](https://github.com/buva-datascience/RepData_PeerAssessment1)*    
       
 #Introduction
@@ -34,7 +34,7 @@ At a high level this assignment is carried out in 5 high level steps given as be
   
 
 ## Step:1 -- Loading and preprocessing the data    
-*The data processing is done as following:  
+The data processing is done as following:  
  1. Source file "**activity.zip**" is downloaded if not present  
  2. Source data is unzipped using unz() function and read via the read.csv() function  
  3. Examine the dataframe using header() and str() functions* 
