@@ -4,6 +4,11 @@ author: "Buva Ramamoorthy"
 date: "August 13, 2014"
 output: html_document
 ---
+   
+     
+**Important Note:** *Kindly visit the below link for for updated report. The plots are available in the figures folder.  
+rpubs  --> http://rpubs.com/bram/reproducibileresearch  
+github --> https://github.com/buva-datascience/RepData_PeerAssessment1*  
   
 ##Loading and preprocessing the data  
   
