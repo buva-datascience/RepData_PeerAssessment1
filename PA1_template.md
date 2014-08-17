@@ -5,8 +5,8 @@ Date: "August 16, 2014"
 ---
   
 **Important Note:** *Kindly visit the below link for for updated report. The plots are available in the figures folder.  
-rpubs  --> http://rpubs.com/bram/reproducibileresearch[http://rpubs.com/bram/reproducibileresearch]  
-github --> https://github.com/buva-datascience/RepData_PeerAssessment1[https://github.com/buva-datascience/RepData_PeerAssessment1]*    
+rpubs  --> [http://rpubs.com/bram/reproducibileresearch](http://rpubs.com/bram/reproducibileresearch) 
+github --> [https://github.com/buva-datascience/RepData_PeerAssessment1](https://github.com/buva-datascience/RepData_PeerAssessment1)*    
       
 #Introduction
 --------------
@@ -18,7 +18,7 @@ This assignment makes use of data from a personal activity monitoring device to 
 -------------------
 The data is pretty much structured in observations in 5 - minute intervals for a said day. The same time interval pattern is repeated for all of the days which are taken into account. Some of the observations had missing values. The dataset is stored in a comma-separated-value (CSV) file and there are a total of 17,568 observations in this dataset.
 
-The variables included in this dataset are:
+The variables included in this dataset are:  
 1. **steps:** Number of steps taking in a 5-minute interval (missing values are coded as NA)  
 2. **date:**  The date on which the measurement was taken in YYYY-MM-DD format  
 3. **interval:** Identifier for the 5-minute interval in which measurement was taken  

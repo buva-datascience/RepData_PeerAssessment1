@@ -7,8 +7,8 @@ output: html_document
    
      
 **Important Note:** *Kindly visit the below link for for updated report. The plots are available in the figures folder.  
-rpubs  --> http://rpubs.com/bram/reproducibileresearch  
-github --> https://github.com/buva-datascience/RepData_PeerAssessment1*  
+rpubs  --> [http://rpubs.com/bram/reproducibileresearch](http://rpubs.com/bram/reproducibileresearch)   
+github --> [https://github.com/buva-datascience/RepData_PeerAssessment1](https://github.com/buva-datascience/RepData_PeerAssessment1)*    
   
 ##Loading and preprocessing the data  
   
