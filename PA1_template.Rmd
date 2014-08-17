@@ -4,12 +4,11 @@ author: "Buva Ramamoorthy"
 date: "August 13, 2014"
 output: html_document
 ---
-
+  
 ##Loading and preprocessing the data  
   
-**1. Show any code that is needed to  
-- Load the data (i.e. read.csv())  
-- Process/transform the data (if necessary) into a format suitable for your analysis**  
+    
+**1. Show any code that is needed to Load the data (i.e. read.csv()) and Process/transform the data (if necessary) into a format suitable for your analysis**  
 
 *The data processing is done as following:  
  1. Source file "**activity.zip**" is downloaded if not present  
@@ -53,21 +52,23 @@ ActivityTable <- read.csv(unz(dest, filename="activity.csv"))
 head(ActivityTable)       
 str(ActivityTable)
 ```
-  
+   
+      
 ## What is mean total number of steps taken per day?  
   
-**2.  What is mean total number of steps taken per day?  
-      For this part of the assignment, you can ignore the missing values in the dataset.  
-      Make a histogram of the total number of steps taken each day.  
-      Calculate and report the mean and median total number of steps taken per day**
+    
+**2.  What is mean total number of steps taken per day? Ignore the missing values in the dataset and make a histogram of the total number of steps taken each day. Calculate and report the mean and median total number of steps taken per day**
       
 *Ignore NAs by filtering out the NA values from steps column and draw histogram of total steps taken each day*
 ```{r histogram, echo=TRUE, cache=TRUE }
 # ignore NAs
 Activities <- ActivityTable[!is.na(ActivityTable$steps),]      
 
-# make date column as factor
+# Convert date as factor
 Activities$date <- factor(as.character(Activities$date))        
+
+# Convert interval as factor
+Activities$interval <- factor(Activities$interval)       
 
 # Calculate mean steps taken each day using tapply()
 meanSteps <- tapply(Activities$steps, Activities$date, mean, na.rm=T) 
@@ -90,7 +91,144 @@ median(totalSteps)
 The Mean of the total steps taken each day is **`r as.integer(mean(totalSteps))`** and 
 Median of the total steps taken each day is **`r median(totalSteps)`**  
   
+    
+## What is the average daily activity pattern?  
   
+  
+**3.  What is the average daily activity pattern? Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis). Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?**  
+        
+*Calculate Average steps taken per the 5 min interval using tapply() function and draw plot*       
+```{r pattern, echo=TRUE}        
+# Calculate mean avg steps taken per 5 min interval for all the days
+timeInterval <- tapply(Activities$steps, Activities$interval, mean, na.rm=T)
+
+# Draw a time series plot 
+plot(row.names(timeInterval), timeInterval, type = "l", xlab = "5-min interval", 
+     ylab = "Average steps taken across all Days", main = "Time Series of Avg. Steps taken per 5-minute interval", 
+     col = "blue")  
+
+# Find the max. number of steps across the time intervals
+TI <- aggregate( steps ~ interval, Activities, na.rm=TRUE, mean)
+
+TI[which.max(TI$steps),]
+```
+    
+We can observe that the interval **`r TI[which.max(TI$steps),1]`** has the maximum average number of steps: **`r  TI[which.max(TI$steps),2]`**. The same can also be observed from the time series plot above.
+  
+  
+## Imputing missing values  
+  
+  
+**3.    Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)  
+        Devise a strategy for filling in all of the missing values in the dataset. 
+        Create a new dataset that is equal to the original dataset but with the missing data filled in. 
+        Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day.**
+  
+*Identify the missing values and filter ONLY those rows to another dataframe*
+       
+```{r fills, echo=TRUE}
+# Subset the NAs into a different dataframe
+NAs <- ActivityTable[is.na(ActivityTable),]
+
+# Find the number of NAs
+nrow(NAs)
+sum(is.na(ActivityTable))
+```
+  
+There is a total of **`r nrow(NAs)`** missing values in the Activity dataset.  
+
+*For imputing the missing values, fill in all missing values with the mean step for the same 5-minute time interval. Then draw a histogram of total steps taken each day*  
+      
+```{r impute, echo=TRUE}
+# Convert date as factor
+NAs$date <- factor(as.character(NAs$date))
+
+# Fill in all missing values with the mean step for the same 5-minute time interval
+for( i in 1:nrow(NAs)){
+        for ( j in 1:nrow(TI)){
+                # Assign the mean step value for the same 5-minute time interval for the missing value        
+                if( NAs$interval[i] == TI$interval[j])  NAs$steps[i] <- TI$steps[j]
+        }
+}
+
+# create a new dataframe with the filled in NA values which is equal to the original dataset
+newActivity <- rbind(Activities, NAs)
+
+# Calculate mean steps taken each day using tapply()
+newmeanSteps <- tapply(newActivity$steps, newActivity$date, mean, na.rm=T)
+
+# Caluculate the total steps taken each day using tapply()
+newtotalSteps <- tapply(newActivity$steps, newActivity$date, sum, na.rm=T)
+
+# Create a histogram for the total steps taken each day with fill ins instead of NAs
+hist(newtotalSteps, xlab="Total Steps taken each day", main="Histogram of the total number of steps(Imputed) taken each day", col=999 )
+```
+  
+  *After filling the missing values, the Median and Mean of the total number of steps taken per day for the new dataset is calculated as below:*  
+
+```{r newmean, echo=TRUE}
+# Mean of the total number of steps taken per day 
+mean(newtotalSteps)
+# Median of the total number of steps taken per day 
+median(newtotalSteps)
+```
+         
+After filling the missing values, the Mean of the total steps taken each day for the new dataset is **`r as.integer(mean(newtotalSteps))`** and 
+Median of the total steps taken each day for the new dataset is **`r as.integer(median(newtotalSteps))`**  
+  
+**Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing  
+  missing data on the estimates of the total daily number of steps?**  
+  
+  The Mean and Median from the previous estimate are **`r as.integer(mean(totalSteps))`** and **`r median(totalSteps)`** respectively.  
+  
+*Kindly note that due to the imputing of missing values, median value is impacted with a a little difference, however there is no change to the mean values.*
+  
+  
+## Are there differences in activity patterns between weekdays and weekends?  
+  
+  
+**For this part the weekdays() function may be of some help here. Use the dataset with the filled-in missing values for this part.  
+Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day. Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis).**  
+
+*Following are steps that are performed:  
+  1. Create a new variable "dayType" to hold values "Weekend/Weekdays" based on the date value  
+  2. Convert the dayType to a factor  
+  3. Create a dataframe which holds the Avg. steps taken per 5 min interval for all weekends and weekdays  
+  4. Convert interval from a factor to a numeric  
+  5. Load ggplot2 package   
+  6. Draw a Time Series qplot of Avg. Steps taken per 5-minute interval on all Weekdays and Weekends*
+  
+```{r daytype, echo=TRUE}
+# check for the type of days in the dataset
+table(format(as.Date(newActivity$date),"%A"))
+
+# create a new variable dataType with weekends and weekdays as values
+newActivity$dayType <- ifelse(weekdays(as.Date(newActivity$date)) %in%  c("Saturday", "Sunday"),'weekend','weekday')
+
+# convert dayType to a factor
+newActivity$dayType <- factor(newActivity$dayType)
+
+# Calculate mean avg steps taken per 5 min interval/dayType for all the days
+plotDF <- aggregate(steps ~ interval+dayType, newActivity, mean)
+
+# convert interval factor to a numeric 
+plotDF$interval <- as.numeric(as.character(plotDF$interval))
+
+# load ggplot2
+library(ggplot2)
+
+# Draw a timeseries plot
+qplot(x=interval, y=steps, data=plotDF, xlab = "5-min interval", 
+      ylab = "Avg. steps taken across all WeekDays/Weekends", geom=c("line"),
+      main = "Time Series- Avg. Steps per 5-min interval on all Weekdays/Weekends") + facet_wrap(~ dayType, ncol=1) 
+```
+
+*Free up the environment memory as we have completed the assignment !*
+```{r freeup, echo=TRUE}
+rm(list=ls())
+```
+    
 
 
 
+  
